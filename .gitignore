@@ -8,7 +8,7 @@ node_modules/
 secrets/
 
 # Build and temporary files
-*.bak
+*.bak*
 *.backup
 *.tar.gz
 *.zip
