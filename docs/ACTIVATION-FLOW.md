@@ -57,7 +57,8 @@ The workflow begins with a technician identifier submitted to the activation API
 
 - Once OTP verification completes, the workflow updates the activation status.
 - The laboratory simulates provisioning steps in software.
-- Resource leases and state transitions are recorded, but physical fiber provisioning remains simulated.
+- The current web activation endpoint does not acquire resource leases or execute the FiberSpider engine state-transition workflow.
+- Those capabilities are implemented separately in the engine/database layer.
 
 ## 11. Final state
 
