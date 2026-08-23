@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PHOTAXON • FiberSpider Lab</title>
+  <link rel="stylesheet" href="assets/css/style.css?v=photaxon-otp-button-debug-20260823" />
+</head>
+<body>
+  <canvas id="bgCanvas"></canvas>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">PH</span>
+        <div>
+          <p class="brand-title" data-i18n="brandTitle">PHOTAXON</p>
+          <p class="brand-subtitle" data-i18n="brandSubtitle">FiberSpider Laboratory</p>
+        </div>
+      </div>
+      <div class="lang-switcher" aria-label="Language switcher">
+        <button type="button" data-lang="it" class="lang-button">🇮🇹 IT</button>
+        <button type="button" data-lang="en" class="lang-button">🇬🇧 EN</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-panel">
+        <div class="hero-copy">
+          <p class="eyebrow" data-i18n="heroEyebrow">Laboratory Simulation</p>
+          <h1 data-i18n="heroTitle">Rete FTTH distribuita con nodi intelligenti e AI.</h1>
+          <p class="hero-lead" data-i18n="heroLead">FiberSpider unisce telemetria reale, LLM intelligence e una rete distribuita sicura tramite Yggdrasil.</p>
+          <div class="hero-actions">
+            <a href="#live-lab" class="button button-primary" data-i18n="heroCta1">Vedi il laboratorio</a>
+            <a href="#activation" class="button button-secondary" data-i18n="heroCta2">Attivazione tecnico</a>
+            <a href="#architecture" class="button button-tertiary" data-i18n="heroCta3">Architettura</a>
+          </div>
+          <p class="hero-note" data-i18n="heroNote">LABORATORY SIMULATION — Nessun provisioning FTTH reale eseguito.</p>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-card">
+            <div class="hero-card-title" data-i18n="heroCardTitle">Live FiberSpider Lab</div>
+            <p data-i18n="heroCardText">Dati reali in tempo reale, topologia dinamica e validazione deterministica.</p>
+            <div class="hero-stats">
+              <div><strong data-i18n="statLive">Live lab</strong><span data-i18n="statLiveDesc">API-driven network</span></div>
+              <div><strong data-i18n="statTopology">Topology</strong><span data-i18n="statTopologyDesc">Interpretazione intelligente</span></div>
+              <div><strong data-i18n="statValidation">Validation</strong><span data-i18n="statValidationDesc">Backend control</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="live-lab" class="section section-grid">
+        <div class="panel status-panel">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="liveLabTitle">Live FiberSpider Lab</p>
+            <h2 data-i18n="liveLabSubtitle">Stato del laboratorio e infrastruttura in tempo reale.</h2>
+          </div>
+          <div class="status-grid">
+            <article class="status-card">
+              <span class="status-label" data-i18n="apiStatusLabel">API status</span>
+              <strong id="apiStatusText">Loading...</strong>
+              <p id="apiStatusDesc">Fetching backend health.</p>
+            </article>
+            <article class="status-card">
+              <span class="status-label" data-i18n="simulationLabel">Simulation</span>
+              <strong id="simulationStatus">Pending</strong>
+              <p id="simulationDesc">Awaiting live lab data.</p>
+            </article>
+            <article class="status-card">
+              <span class="status-label" data-i18n="controlPlaneLabel">Control plane</span>
+              <strong id="openstackStatus">Loading...</strong>
+              <p id="openstackStatusDesc">Fetching OpenStack status.</p>
+            </article>
+          </div>
+
+          <div class="live-data-grid">
+            <article class="data-panel">
+              <h3 data-i18n="generalStatus">General status</h3>
+              <dl>
+                <div><dt data-i18n="apiOnline">API Online</dt><dd id="healthStatus">—</dd></div>
+                <div><dt data-i18n="projectLabel">Project</dt><dd id="projectName">—</dd></div>
+                <div><dt data-i18n="statusLabel">Status</dt><dd id="projectState">—</dd></div>
+                <div><dt data-i18n="technicianLabel">Technician</dt><dd id="techAuth">—</dd></div>
+                <div><dt data-i18n="ontDetectedLabel">ONT detected</dt><dd id="ontDetected">—</dd></div>
+              </dl>
+            </article>
+            <article class="data-panel">
+              <h3 data-i18n="missionDetails">Mission details</h3>
+              <dl>
+                <div><dt data-i18n="ontSerialLabel">ONT serial</dt><dd id="ontSerial">—</dd></div>
+                <div><dt data-i18n="llmProposalLabel">LLM proposal</dt><dd id="llmProposal">—</dd></div>
+                <div><dt data-i18n="backendValidationLabel">Backend validation</dt><dd id="backendValidation">—</dd></div>
+                <div><dt data-i18n="provisioningLabel">Provisioning</dt><dd id="provisioningMode">—</dd></div>
+                <div><dt data-i18n="finalStateLabel">Final state</dt><dd id="finalState">—</dd></div>
+              </dl>
+            </article>
+          </div>
+
+          <div class="openstack-grid panel">
+            <div class="section-heading small">
+              <p class="eyebrow" data-i18n="openstackTitle">OpenStack Infrastructure</p>
+              <h3 data-i18n="openstackSubtitle">Control plane and virtual network topology.</h3>
+            </div>
+            <div class="openstack-status-cards">
+              <div class="openstack-status-card">
+                <span data-i18n="controlPlaneLabel">Control Plane</span>
+                <strong id="openstackStatus">Loading...</strong>
+              </div>
+              <div class="openstack-status-card">
+                <span data-i18n="fsMgmtLabel">FS-MGMT</span>
+                <strong id="fsMgmtStatus">—</strong>
+              </div>
+              <div class="openstack-status-card">
+                <span data-i18n="fsLineALabel">FS-LINE-A</span>
+                <strong id="fsLineAStatus">—</strong>
+              </div>
+              <div class="openstack-status-card">
+                <span data-i18n="fsLineBLabel">FS-LINE-B</span>
+                <strong id="fsLineBStatus">—</strong>
+              </div>
+              <div class="openstack-status-card">
+                <span data-i18n="fsLineCLabel">FS-LINE-C</span>
+                <strong id="fsLineCStatus">—</strong>
+              </div>
+            </div>
+            <div class="cabinet-mesh">
+              <div class="cabinet-node" id="cabA">
+                <div class="cabinet-icon"></div>
+                <strong>CAB-A</strong>
+                <span id="cabAStatus">—</span>
+              </div>
+              <div class="cabinet-node" id="cabB">
+                <div class="cabinet-icon"></div>
+                <strong>CAB-B</strong>
+                <span id="cabBStatus">—</span>
+              </div>
+              <div class="cabinet-node" id="cabC">
+                <div class="cabinet-icon"></div>
+                <strong>CAB-C</strong>
+                <span id="cabCStatus">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel topology-panel">
+          <div class="section-heading">
+            <p class="eyebrow" data-i18n="topologyTitle">Fiber topology</p>
+            <h2 data-i18n="topologySubtitle">Percorso simulato dal laboratorio.</h2>
+          </div>
+          <div class="topology-viz">
+            <canvas id="topologyCanvas" aria-label="Topology visualization"></canvas>
+            <div class="topology-caption">
+              <p data-i18n="topologyNote">Il percorso è una rappresentazione animata della simulazione di rete.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section panel agent-visualization">
+        <div class="section-heading">
+          <p class="eyebrow" data-i18n="llmTitle">FIBERSPIDER INTELLIGENCE</p>
+          <h2 data-i18n="llmSubtitle">Il processo LLM e la validazione deterministica.</h2>
+        </div>
+        <div class="llm-flow">
+          <div class="llm-step" data-step="observe"><span data-i18n="llmObserve">Observe</span></div>
+          <div class="llm-step" data-step="analyze"><span data-i18n="llmAnalyze">Analyze</span></div>
+          <div class="llm-step" data-step="propose"><span data-i18n="llmPropose">Topology Proposal</span></div>
+          <div class="llm-step" data-step="validate"><span data-i18n="llmValidate">Deterministic Validation</span></div>
+          <div class="llm-step" data-step="provision"><span data-i18n="llmProvision">Provisioning Plan</span></div>
+        </div>
+        <div class="llm-status" id="llmStatusText">...</div>
+      </section>
+
+      <section id="activation" class="section panel activation-panel">
+        <div class="section-heading">
+          <p class="eyebrow" data-i18n="activationTitle">Technician activation</p>
+          <h2 data-i18n="activationSubtitle">Workflow di attivazione simulato.</h2>
+        </div>
+        <div class="activation-layout">
+          <form id="activationForm" class="activation-form">
+            <div class="form-group">
+              <label for="telegramId" data-i18n="telegramIdLabel">Telegram ID</label>
+              <input id="telegramId" name="telegramId" type="text" placeholder="" autocomplete="off" required />
+            </div>
+            <div class="form-group">
+              <label for="workRequest" data-i18n="workRequestLabel">WR / Work Request</label>
+              <input id="workRequest" name="workRequest" type="text" placeholder="" required />
+            </div>
+            <div class="form-group">
+              <label for="ontSerialInput" data-i18n="ontSerialLabel">ONT GPON / Serial</label>
+              <input id="ontSerialInput" name="ontSerialInput" type="text" placeholder="" required />
+            </div>
+            <div class="form-group three-col">
+              <div>
+                <label for="roeInput" data-i18n="roeLabel">ROE</label>
+                <input id="roeInput" name="roeInput" type="text" placeholder="" required />
+              </div>
+              <div>
+                <label for="cabinetInput" data-i18n="cabinetLabel">Cabinet</label>
+                <select id="cabinetInput" name="cabinetInput" required>
+                  <option value="CAB-A">CAB-A</option>
+                  <option value="CAB-B">CAB-B</option>
+                  <option value="CAB-C">CAB-C</option>
+                </select>
+              </div>
+              <div>
+                <label for="splitterInput" data-i18n="splitterLabel">Splitter</label>
+                <select id="splitterInput" name="splitterInput" required>
+                  <option value="SPL-A-01">SPL-A-01</option>
+                  <option value="SPL-B-01">SPL-B-01</option>
+                  <option value="SPL-C-01">SPL-C-01</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="notesInput" data-i18n="notesLabel">Field path / technician notes</label>
+              <textarea id="notesInput" name="notesInput" placeholder="" rows="4"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" id="sendOtpButton" class="button button-primary" data-i18n="activationButtonStart">📲 Invia codice OTP</button>
+              <button type="button" id="verifyOtpButton" class="button button-secondary hidden" data-i18n="activationButtonVerify">🔐 Conferma OTP</button>
+            </div>
+            <div class="form-group hidden" id="otpFieldWrapper">
+              <label for="otpInput" data-i18n="otpLabel">Codice OTP</label>
+              <input id="otpInput" name="otpInput" type="text" maxlength="6" placeholder="" autocomplete="off" />
+            </div>
+            <p class="form-note" data-i18n="activationNote">Activation workflow simulation only. No real provisioning executed.</p>
+          </form>
+          <div class="activation-flow">
+            <h3 data-i18n="activationFlowTitle">Activation workflow simulation</h3>
+            <ol class="workflow-list" id="activationSteps">
+              <li data-step="identity" data-i18n="activationStep1">Telegram Identity</li>
+              <li data-step="technician" data-i18n="activationStep2">Technician verification</li>
+              <li data-step="wr" data-i18n="activationStep3">WR verification</li>
+              <li data-step="otp" data-i18n="activationStep4">OTP Telegram</li>
+              <li data-step="ont" data-i18n="activationStep5">ONT / GPON identification</li>
+              <li data-step="physical" data-i18n="activationStep6">Physical path analysis</li>
+              <li data-step="llm" data-i18n="activationStep7">LLM analysis</li>
+              <li data-step="validation" data-i18n="activationStep8">Backend validation</li>
+              <li data-step="provision" data-i18n="activationStep9">Simulated provisioning</li>
+              <li data-step="closed" data-i18n="activationStep10">Job closed</li>
+            </ol>
+            <div class="activation-result" id="activationResult">...</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section panel architecture-panel" id="architecture">
+        <div class="section-heading">
+          <p class="eyebrow" data-i18n="architectureTitle">Distributed architecture</p>
+          <h2 data-i18n="architectureSubtitle">Public, control and data layers.</h2>
+        </div>
+        <div class="architecture-graph">
+          <div class="arch-node">Internet</div>
+          <div class="arch-line">→</div>
+          <div class="arch-node">Cloudflare</div>
+          <div class="arch-line">→</div>
+          <div class="arch-node">ALEX<br><span data-i18n="alexRole">Public Web Layer</span></div>
+          <div class="arch-line">→</div>
+          <div class="arch-node">Yggdrasil<br><span data-i18n="meshLabel">Encrypted Mesh</span></div>
+          <div class="arch-line">→</div>
+          <div class="arch-node">RAGNO<br><span data-i18n="ragnoRole">FiberSpider Intelligence / API</span></div>
+          <div class="arch-line">→</div>
+          <div class="arch-node">AAA<br><span data-i18n="aaaRole">Distributed Data Layer</span></div>
+        </div>
+      </section>
+
+      <section class="section panel funding-panel">
+        <div class="section-heading">
+          <p class="eyebrow" data-i18n="fundingTitle">NEXT RESEARCH PHASE</p>
+          <h2 data-i18n="fundingSubtitle">Smart FTTH cabinet prototype.</h2>
+        </div>
+        <div class="funding-grid">
+          <div><strong data-i18n="research1">Optical Sensors</strong></div>
+          <div><strong data-i18n="research2">Telemetry</strong></div>
+          <div><strong data-i18n="research3">Smart Switching</strong></div>
+          <div><strong data-i18n="research4">Local AI Compute</strong></div>
+          <div><strong data-i18n="research5">Resilient Power</strong></div>
+          <div><strong data-i18n="research6">Autonomous Diagnostics</strong></div>
+          <div><strong data-i18n="research7">Distributed Control</strong></div>
+        </div>
+        <p class="funding-note" data-i18n="fundingNote">Software proof of concept completed. Hardware smart cabinet is research/prototype phase.</p>
+      </section>
+    </main>
+  </div>
+  <script src="assets/js/app.js?v=photaxon-form-map-fix-20260823"></script>
+</body>
+</html>

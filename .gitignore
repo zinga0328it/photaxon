@@ -1,0 +1,26 @@
+# Node and frontend dependencies
+node_modules/
+.DS_Store
+
+# Environment and secret files
+.env
+.env.*
+secrets/
+
+# Build and temporary files
+*.bak
+*.backup
+*.tar.gz
+*.zip
+*.log
+.cache/
+cache/
+
+# Python
+__pycache__/
+*.pyc
+
+# Editor files
+*.swp
+*.swo
+.vscode/

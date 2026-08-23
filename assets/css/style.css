@@ -1,0 +1,478 @@
+:root {
+  color-scheme: dark;
+  --bg: #05070f;
+  --surface: rgba(10, 14, 28, 0.94);
+  --surface-soft: rgba(16, 24, 44, 0.92);
+  --surface-strong: rgba(15, 21, 38, 0.98);
+  --text: #e9f1ff;
+  --muted: #9eb7d4;
+  --accent: #4cc9ff;
+  --accent-strong: #86e8ff;
+  --success: #55ffb1;
+  --warning: #ffd56b;
+  --danger: #ff5d7a;
+  --border: rgba(120, 180, 255, 0.16);
+  --shadow: 0 26px 90px rgba(0,0,0,.24);
+  --radius: 24px;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at top left, rgba(76,201,255,.18), transparent 22%), radial-gradient(circle at 90% 10%, rgba(134,232,255,.1), transparent 16%), #030711;
+  color: var(--text);
+  overflow-x: hidden;
+}
+#bgCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+.page-shell {
+  position: relative;
+  z-index: 1;
+  width: min(1300px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+  border-radius: 28px;
+  background: rgba(16,23,40,.88);
+  border: 1px solid rgba(255,255,255,.06);
+  box-shadow: var(--shadow);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.brand-mark {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(76,201,255,.18), rgba(75,116,226,.14));
+  color: var(--accent);
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+.brand-title {
+  margin: 0;
+  font-size: 1rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.brand-subtitle {
+  margin: .2rem 0 0;
+  color: var(--muted);
+  font-size: .85rem;
+}
+.lang-switcher {
+  display: flex;
+  gap: .6rem;
+}
+.lang-button {
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: .75rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all .18s ease;
+}
+.lang-button.active,
+.lang-button:hover {
+  border-color: rgba(76,201,255,.4);
+  background: rgba(76,201,255,.12);
+}
+.hero-panel {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  padding: 2.4rem;
+  border-radius: 32px;
+  background: rgba(14, 20, 36, .92);
+  border: 1px solid rgba(255,255,255,.07);
+  box-shadow: var(--shadow);
+}
+.hero-copy h1 {
+  margin: 0;
+  font-size: clamp(3rem, 4vw, 4.8rem);
+  line-height: 1;
+}
+.hero-lead,
+.hero-note,
+.section-heading small,
+.form-note,
+.openstack-node span,
+.activation-result,
+.funding-note {
+  color: var(--muted);
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .9rem;
+  margin-top: 1.6rem;
+}
+.hero-note {
+  margin-top: 1.8rem;
+  font-size: .95rem;
+}
+.button {
+  border: none;
+  border-radius: 999px;
+  padding: 1rem 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  color: #071220;
+  transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.button:hover {
+  transform: translateY(-2px);
+}
+.button-primary {
+  background: linear-gradient(135deg, var(--accent), #55e5ff);
+  color: #04101a;
+  box-shadow: 0 20px 50px rgba(76,201,255,.2);
+}
+.button-secondary {
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+}
+.button-tertiary {
+  background: rgba(32,44,74,.9);
+  color: var(--accent-strong);
+}
+.hero-card {
+  padding: 2rem;
+  border-radius: 28px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+}
+.hero-card-title {
+  color: var(--accent);
+  margin: 0 0 .8rem;
+}
+.hero-stats {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.4rem;
+}
+.hero-stats div {
+  background: rgba(0,0,0,.18);
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.06);
+}
+.hero-stats span {
+  font-size: .95rem;
+}
+.section {
+  margin-top: 2rem;
+}
+.section-heading {
+  margin-bottom: 1.3rem;
+}
+.section-heading h2 {
+  margin: .25rem 0 0;
+  font-size: clamp(1.6rem, 2vw, 2.2rem);
+}
+.status-panel,
+.topology-panel,
+.agent-visualization,
+.architecture-panel,
+.funding-panel,
+.activation-panel {
+  background: rgba(11,16,30,.95);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 28px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+}
+.status-grid,
+.openstack-status-cards,
+.live-data-grid,
+.llm-flow,
+.architecture-graph,
+.funding-grid,
+.cabinet-mesh,
+.activation-grid {
+  display: grid;
+  gap: 1rem;
+}
+.status-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.status-card,
+.data-panel,
+.openstack-status-card,
+.cabinet-node {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 22px;
+  padding: 1.3rem;
+}
+.status-card strong,
+.openstack-status-card strong {
+  display: block;
+  margin-top: .8rem;
+  font-size: 1.35rem;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .28rem .75rem;
+  border-radius: 999px;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+.badge-success {
+  background: rgba(85,255,177,.12);
+  color: var(--success);
+}
+.badge-warning {
+  background: rgba(255,213,107,.12);
+  color: var(--warning);
+}
+.badge-offline {
+  background: rgba(255,93,122,.12);
+  color: var(--danger);
+}
+.badge-simulation {
+  background: rgba(76,201,255,.14);
+  color: var(--accent);
+}
+.cabinet-node.active {
+  background: rgba(76,201,255,.12);
+  border-color: rgba(76,201,255,.22);
+}
+.cabinet-node.offline {
+  background: rgba(255,93,122,.12);
+  border-color: rgba(255,93,122,.2);
+}
+.data-panel {
+  padding: 1.6rem;
+}
+.data-panel dl {
+  display: grid;
+  gap: .95rem;
+}
+.data-panel dt,
+.data-panel dd {
+  margin: 0;
+}
+.data-panel dt {
+  color: var(--muted);
+  font-size: .9rem;
+}
+.data-panel dd {
+  font-size: 1rem;
+}
+.openstack-status-cards {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.cabinet-mesh {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.cabinet-node {
+  display: grid;
+  gap: .65rem;
+  text-align: center;
+  position: relative;
+}
+.cabinet-icon {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto;
+  border-radius: 18px;
+  background: rgba(76,201,255,.18);
+  box-shadow: inset 0 0 20px rgba(76,201,255,.16);
+}
+.cabinet-node strong {
+  font-size: 1rem;
+}
+.cabinet-node span {
+  color: var(--muted);
+}
+.topology-panel {
+  padding: 1.8rem;
+}
+.topology-viz {
+  position: relative;
+  min-height: 340px;
+}
+#topologyCanvas {
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255,255,255,.03), transparent);
+}
+.topology-caption {
+  margin-top: 1rem;
+}
+.llm-flow {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+}
+.llm-step {
+  padding: 1rem;
+  border-radius: 20px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+  text-align: center;
+  min-height: 100px;
+  display: grid;
+  align-content: center;
+  transition: transform .2s ease, background .2s ease;
+}
+.llm-step.active {
+  background: rgba(76,201,255,.18);
+  border-color: rgba(76,201,255,.3);
+  transform: translateY(-4px);
+}
+.llm-status {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.05);
+}
+.activation-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 1.5rem;
+}
+.hidden {
+  display: none !important;
+}
+.activation-form {
+  display: grid;
+  gap: 1rem;
+}
+.form-group {
+  display: grid;
+  gap: .5rem;
+}
+.form-group label {
+  color: var(--muted);
+}
+.form-group input,
+.form-group textarea {
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: .95rem 1rem;
+}
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: rgba(76,201,255,.4);
+  box-shadow: 0 0 0 3px rgba(76,201,255,.1);
+}
+.two-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.three-col {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.workflow-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: .75rem;
+}
+.workflow-list li {
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+}
+.activation-result {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(76,201,255,.08);
+  border: 1px solid rgba(76,201,255,.12);
+  white-space: pre-line;
+}
+.architecture-graph {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: center;
+  justify-items: center;
+}
+.arch-node {
+  padding: 1rem 1.1rem;
+  border-radius: 22px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+  text-align: center;
+}
+.arch-line {
+  font-size: 1.6rem;
+  color: var(--muted);
+  text-align: center;
+}
+.funding-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.funding-grid div {
+  padding: 1rem 1.1rem;
+  border-radius: 20px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+}
+.funding-note {
+  margin-top: 1rem;
+}
+@media (max-width: 1024px) {
+  .hero-panel,
+  .activation-layout,
+  .status-grid,
+  .openstack-status-cards,
+  .live-data-grid,
+  .llm-flow,
+  .architecture-graph,
+  .funding-grid,
+  .cabinet-mesh,
+  .three-col { grid-template-columns: 1fr; }
+  .topbar { flex-wrap: wrap; }
+}
+@media (max-width: 700px) {
+  .page-shell { width: calc(100% - 1.2rem); padding: 1.2rem 0 2rem; }
+  .hero-copy h1 { font-size: 2.8rem; }
+  .hero-panel { padding: 1.6rem; }
+  .button { width: 100%; justify-content: center; }
+  .lang-switcher { width: 100%; justify-content: center; }
+  .status-grid,
+  .openstack-status-cards,
+  .live-data-grid,
+  .llm-flow,
+  .architecture-graph,
+  .funding-grid,
+  .cabinet-mesh { gap: .8rem; }
+  .topology-viz { min-height: 280px; }
+}
