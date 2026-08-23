@@ -13,8 +13,9 @@ The workflow begins with a technician identifier submitted to the activation API
 
 ## 3. WR reference
 
-- The activation request includes a work order reference (WR).
-- The backend stores the WR and associated field metadata in the activation request record.
+- The activation request includes a work order reference (WR) as a stored field.
+- WR is currently stored as a work-order reference.
+- WR validation is NOT_IMPLEMENTED in the current web activation flow.
 
 ## 4. Telegram OTP
 
@@ -25,20 +26,20 @@ The workflow begins with a technician identifier submitted to the activation API
 
 ## 5. ONT / GPON identification
 
-- The technician provides ONT serial and cabinet/ splitter context.
+- The technician provides ONT serial, ROE, cabinet, and splitter context.
 - The laboratory models ONT detection and GPON path state as part of the activation record.
 - Physical GPON hardware is not required for this branch; the identification step is part of the simulated workflow.
 
 ## 6. Path analysis
 
-- The activation request captures cabinet, splitter, line, and ROE context.
+- The activation request captures cabinet, splitter, and ROE context.
 - The system records logical resource topology for the requested field operation.
 
 ## 7. LLM proposal
 
-- The laboratory includes an LLM runtime for agent proposals and field interpretation.
-- The LLM model helps produce a topology proposal based on the technician’s input and the cabinet context.
-- This is a controlled laboratory simulation and not a production network decision engine.
+- The LLM runtime and cabinet agent proposal mechanism are implemented as laboratory components.
+- They are not yet directly invoked by the current `/api/activation/start` → `/api/activation/verify` workflow.
+- The LLM component remains part of the simulation and proposal architecture rather than the active activation API path.
 
 ## 8. Deterministic backend validation
 
@@ -49,7 +50,8 @@ The workflow begins with a technician identifier submitted to the activation API
 ## 9. Persistent DB state
 
 - Activation requests, OTP challenges, and resource states are stored in PostgreSQL.
-- The `PostgresStore` implementation persists technician authorization, activation workflow data, and resource lease state.
+- The `PostgresStore` implementation persists technician authorization and activation workflow data.
+- Resource lease and deterministic state-transition support exists in the FiberSpider engine and PostgreSQL layer, but is not yet wired into the current web activation endpoint.
 
 ## 10. Provisioning workflow
 
@@ -57,14 +59,17 @@ The workflow begins with a technician identifier submitted to the activation API
 - The laboratory simulates provisioning steps in software.
 - Resource leases and state transitions are recorded, but physical fiber provisioning remains simulated.
 
-## 11. JOB_CLOSED
+## 11. Final state
 
-- The endpoint returns a final state and simulation result when the workflow completes.
-- The process ends with the activation marked as closed in the database.
+- The current endpoint returns `final_state = JOB_CLOSED` in the API response when the simulated workflow completes.
+- In the database, `activation_requests.status` becomes `SIMULATION_COMPLETED`.
+- The simulation result contains `final_state = JOB_CLOSED`.
+
+> The workflow does not set `activation_requests.status` directly to `JOB_CLOSED`.
 
 ## Real vs simulated
 
-- Real: technician authorization, OTP challenge, database persistence, API activation flow, backend validation.
-- Simulated: physical ONT provisioning, GPON transport, actual fiber path switching, hardware integration.
+- Real: technician authorization, Telegram OTP, OTP verification, PostgreSQL activation persistence, API workflow.
+- Simulated: ONT detection, physical path confirmation, FTTH provisioning, GPON/OLT, JOB_CLOSED provisioning result.
 
 The `pc-ragno` branch focuses on a laboratory proof-of-concept activation flow with persistent state and security controls, while physical FTTH execution remains part of the simulation model.

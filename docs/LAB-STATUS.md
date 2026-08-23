@@ -17,7 +17,7 @@ This document summarizes the current implementation status of the FiberSpider la
 - Activation request lifecycle from OTP request to verification.
 - Simulated path analysis and activation completion.
 - Cabinet-level agent proposals via LLM runtime simulation.
-- Persistent storage of activation requests, OTP challenges, and resource leases.
+- Persistent storage of activation requests and OTP challenges, with resource lease support implemented at the engine/database layer.
 
 ## SIMULATED
 

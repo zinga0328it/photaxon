@@ -19,7 +19,7 @@ FiberSpider is a distributed FTTH laboratory architecture that combines:
 - Telegram OTP-based technician verification
 - PostgreSQL persistence for activation requests, OTP challenges, and resource state
 - Cabinet agent simulation for CAB-A, CAB-B, CAB-C
-- LLM-assisted topology proposal and deterministic backend validation
+- Laboratory LLM runtime and topology proposal support, with deterministic backend validation
 - Proof-of-concept FTTH provisioning simulation, not physical GPON deployment
 
 ## Documentation
