@@ -1,0 +1,32 @@
+# Python environment
+.venv/
+venv/
+ENV/
+.env
+
+# Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local configuration
+.vscode/
+.idea/
+*.swp
+
+# Secrets and credentials
+secrets/
+*.key
+*.pem
+*.crt
+
+# Database files
+*.db
+*.sqlite3
+
+# Logs
+*.log
+
+# Archive and backup files
+*.tar.gz
+*.zip
