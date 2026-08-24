@@ -73,3 +73,7 @@ This repository is a public research and demonstration effort. All rights reserv
 ## Safety note
 
 This branch is a curated public snapshot. It does not contain operational credentials, sensitive infrastructure configuration, or private secrets.
+
+## Mobile workflow verification
+
+This reproducibility branch was prepared and committed from Termux on Android, demonstrating a Git-based development workflow from a mobile Linux environment.
