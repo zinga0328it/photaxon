@@ -22,6 +22,35 @@ FiberSpider is a distributed FTTH laboratory architecture that combines:
 - Laboratory LLM runtime and topology proposal support, with deterministic backend validation
 - Proof-of-concept FTTH provisioning simulation, not physical GPON deployment
 
+## Reproduce the demo
+
+```bash
+git clone --branch pc-ragno https://github.com/zinga0328it/photaxon.git
+cd photaxon
+cp .env.example .env
+docker compose up --build -d
+curl http://127.0.0.1:8000/api/health
+docker compose run --rm backend python -m demo.run_demo
+```
+
+See [the repeatable procedure](docs/REPRODUCIBLE-DEMO.md), the
+[architecture diagrams](docs/ARCHITECTURE-DIAGRAM.md), and the
+[Smart Cabinet telemetry contract](docs/SMART-CABINET-TELEMETRY.md).
+
+## Verification status
+
+| Area | Status |
+|---|---|
+| FastAPI, deterministic resource engine and storage | working software |
+| PostgreSQL demo persistence | working software |
+| Cabinet event input and FTTH physical path | simulated |
+| LLM decision in the repeatable demo | simulated, advisory only |
+| Telegram OTP and OpenStack | optional laboratory integrations |
+| Physical ONT/OLT, sensors, LEDs and provisioning | future / not implemented |
+
+The LLM agent proposes. Deterministic backend policy validates. Only authorized
+code reserves resources and updates PostgreSQL.
+
 ## Documentation
 
 See the following documents for details:
@@ -33,6 +62,9 @@ See the following documents for details:
 - `docs/SECURITY-MODEL.md`
 - `docs/ROADMAP.md`
 - `docs/RESEARCH-AND-FUNDING.md`
+- `docs/ARCHITECTURE-DIAGRAM.md`
+- `docs/SMART-CABINET-TELEMETRY.md`
+- `docs/REPRODUCIBLE-DEMO.md`
 
 ## Research and funding
 

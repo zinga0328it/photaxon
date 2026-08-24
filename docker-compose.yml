@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: fiberspider
+      POSTGRES_USER: fiberspider_app
+      POSTGRES_PASSWORD: fiberspider_demo_only
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fiberspider_app -d fiberspider"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - fiberspider-db:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+  backend:
+    build: .
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8000:8000"
+volumes:
+  fiberspider-db:
+

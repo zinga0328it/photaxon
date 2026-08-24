@@ -1,0 +1,45 @@
+name: FiberSpider CI
+on: [push, pull_request]
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: python -m unittest tests.test_resource_engine tests.test_storage_backend tests.test_smart_cabinet -v
+  postgres-demo-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: fiberspider
+          POSTGRES_USER: fiberspider_app
+          POSTGRES_PASSWORD: fiberspider_demo_only
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U fiberspider_app -d fiberspider"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      FIBERSPIDER_DB_HOST: localhost
+      FIBERSPIDER_DB_PORT: "5432"
+      FIBERSPIDER_DB_NAME: fiberspider
+      FIBERSPIDER_DB_USER: fiberspider_app
+      FIBERSPIDER_DB_PASSWORD: fiberspider_demo_only
+      FIBERSPIDER_RUN_DEMO_DB_TEST: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: psql "$DATABASE_URL" -f db/init/001_reproducible_demo.sql
+        env:
+          DATABASE_URL: postgresql://fiberspider_app:fiberspider_demo_only@localhost:5432/fiberspider
+      - run: python -m unittest tests.test_demo_database -v
+
