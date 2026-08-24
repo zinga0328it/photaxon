@@ -4,7 +4,7 @@ Prerequisites: Git and Docker Engine with Docker Compose v2. No Telegram token,
 OpenStack installation, GPON equipment or LLM API key is required.
 
 ```bash
-git clone --branch pc-ragno https://github.com/zinga0328it/photaxon.git
+git clone --branch rd-reproducible-demo https://github.com/zinga0328it/photaxon.git
 cd photaxon
 cp .env.example .env
 docker compose up --build -d

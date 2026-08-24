@@ -11,9 +11,9 @@ FiberSpider is a distributed FTTH laboratory architecture that combines:
 - simulated FTTH path analysis and deployment workflows
 - OpenStack laboratory network integration
 
-## Branch role: pc-ragno
+## Branch role: rd-reproducible-demo
 
-`pc-ragno` contains the RAGNO laboratory backend and the FiberSpider activation API.
+`rd-reproducible-demo` contains the RAGNO laboratory backend and the FiberSpider activation API.
 
 - FastAPI activation service for technician workflows
 - Telegram OTP-based technician verification
@@ -25,7 +25,7 @@ FiberSpider is a distributed FTTH laboratory architecture that combines:
 ## Reproduce the demo
 
 ```bash
-git clone --branch pc-ragno https://github.com/zinga0328it/photaxon.git
+git clone --branch rd-reproducible-demo https://github.com/zinga0328it/photaxon.git
 cd photaxon
 cp .env.example .env
 docker compose up --build -d
