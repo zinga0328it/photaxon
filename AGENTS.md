@@ -139,8 +139,14 @@ See `docs/RAGNO-AAA-STATUS.md` for the sanitized handoff status for Lia.
 	and the isolated CirrOS Neutron lab are verified on RAGNO. Keep mutations in
 	reviewed operator commands, never in the API.
 - Probe evidence is local-only in ignored `secrets/openstack-probes.json`, mode
-	0600, and expires after one hour. Never report a cabinet ACTIVE without fresh
-	isolation and CENTRAL-01 connectivity evidence.
+	0600, and bound to a canonical topology fingerprint. Age is informational;
+	any relevant topology mismatch or invalid probe returns DEGRADED and prevents
+	ACTIVE cabinet status. Never alter the original guest-test timestamp/results.
+- The shipped guest probes are cloud-init user-data and ran at initial boot.
+	Their PASS remains usable only while the live topology fingerprint matches.
+	On mismatch, do not edit the fingerprint or timestamp to force PASS: a new
+	real guest test is required. There is currently no safe guest execution
+	channel (no keypair/tenant route, serial disabled, loopback VNC inactive).
 - See `openstack/PRECHECK.md`, `docs/OPENSTACK-RAGNO.md`,
 	`docs/NEUTRON-TOPOLOGY.md`, and `docs/OPENSTACK-TEST-REPORT.md` for status.
 

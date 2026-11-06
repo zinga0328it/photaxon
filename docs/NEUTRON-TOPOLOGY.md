@@ -29,39 +29,23 @@ No cabinet port exists on another cabinet's networks.
 	ICMP PASS and TCP PASS from inside the guests.
 - No host nftables rule was used to simulate isolation.
 
-The probe results are retained on RAGNO in an ignored mode-0600 file and are
-considered current for one hour. Rust API cabinet status is INACTIVE when any
-DB/Nova/network/probe condition is missing or stale.
-# Neutron Lab Topology
+The original real guest results are retained on RAGNO in an ignored mode-0600
+file with their original verification timestamp. A canonical SHA-256 covers
+the required Nova server IDs/statuses, network/subnet IDs, port IDs and mappings,
+security-group IDs and all associated rules. PASS remains valid while that
+fingerprint is unchanged; probe age alone does not expire it. Any mismatch or
+invalid/missing probe forces DEGRADED and prevents cabinets from being ACTIVE.
 
-Status: proposed; no Neutron resources exist yet.
+Fingerprint verified on 2026-11-06:
+`8dcb07d97da5cb496c671f4e024a6b4e391beb8bed3d46815d9f9e49105128c4`.
+The recorded guest verification time remains `2026-11-06T19:34:15Z`; this
+fingerprint association does not claim that guest commands were re-run then.
 
-## Placement
+## Refresh Limitation
 
-OpenStack and Neutron ML2/OVN run inside the isolated lab VM on RAGNO. ALEX
-remains the frontend/Apache reverse-proxy node. The application path is:
-
-```text
-Browser -> ALEX/Apache -> RAGNO/FiberSpider -> AAA/PostgreSQL
-```
-
-## Logical Networks
-
-Create the `photaxon-lab` project with separate private tenant networks for
-CAB-A, CAB-B, and CAB-C. Add a management network only if required by the lab
-agents. Select IPv4 CIDRs only after checking all existing private subnets;
-no CIDRs are assigned because ALEX/AAA network ranges have not been inventoried.
-
-Use ML2/OVN switching inside the VM. Do not attach provider/public networks,
-physical NICs, the host management interface, or Yggdrasil. Any router must
-remain internal, without an external gateway. Use default-deny inbound security
-groups and allow only explicitly required lab traffic.
-
-Do not connect simulated cabinet networks to GPON, operator infrastructure, or
-real devices.
-
-## Not Applied
-
-No project, networks, subnets, router, security groups, OVN chassis, or virtual
-machines have been created. Resource creation waits until an isolated VM can
-be prepared without starving or interrupting host services.
+Guest user-data executes only on boot; the current lab has no usable SSH keypair
+or tenant route, no serial console, and an inactive loopback-only VNC proxy.
+The existing guest results are bound to the verified topology fingerprint;
+they remain valid until a relevant server, port, network, subnet or security
+policy changes. Do not reset mtime or rewrite probe results. On mismatch, require
+a new real guest verification before reporting PASS.

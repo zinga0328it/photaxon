@@ -36,13 +36,11 @@ RAGNO stores `FIBERSPIDER_ALEX_READ_TOKEN` only in ignored `secrets/runtime.env`
 PHOTAXON_RAGNO_API_TOKEN=<SECRET_FROM_ENV>
 ```
 
-Transfer the value through an authorized secure channel, entering it directly into a protected terminal prompt on ALEX. Never paste it into chat, shell arguments, Git, HTML, JavaScript, localStorage or a URL. Compare only the SHA-256 fingerprint delivered separately by RAGNO. If ALEX is unreachable, record `ALEX_SECRET_TRANSFER_REQUIRED=YES` and stop before public activation.
+Transfer the value only through an authorized secure channel, entering it directly into a protected terminal prompt on ALEX. Never paste it into chat, shell arguments, Git, HTML, JavaScript, localStorage or a URL. Compare only the SHA-256 fingerprint delivered separately by RAGNO. Lia reports that the existing read-only token is installed on ALEX and direct requests work; this report does not inspect ALEX's secret file or expose the token.
 
 ## Apache Requirements
 
 Use the existing HTTPS `photaxon.com` vhost. Proxy the same-origin prefix `/fiberspider/api/` to `http://[RAGNO_YGG_ADDRESS]:18000/api/`. Apache must remove any client-supplied Authorization header and set a Bearer value from `PHOTAXON_RAGNO_API_TOKEN` server-side. Require `mod_proxy`, `mod_proxy_http`, and `mod_headers`; run `apache2ctl configtest` and a graceful reload. Do not change other vhosts, TLS, ports, firewall rules or Yggdrasil configuration.
 
-The current ALEX vhost and public proxy are not verified/applied by this document. Verify all five public URLs and the dynamic homepage after ALEX applies the protected configuration.
-
-Current transfer status: `ALEX_SECRET_TRANSFER_REQUIRED=YES`. No SSH/Yggdrasil
-destination for ALEX was available in this session, so no secret was copied.
+The current ALEX vhost, Apache proxy and public frontend were not modified by
+this RAGNO work. Verify public URLs and browser rendering on ALEX separately.

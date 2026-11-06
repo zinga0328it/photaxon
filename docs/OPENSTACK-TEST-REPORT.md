@@ -21,70 +21,42 @@ Result: RAGNO lab ready; ALEX handoff pending.
 - AAA: 3 DB cabinets and 1 ROE. CAB-A has `SPL-A-01` and one ROE; CAB-B/C
   have their own splitters and currently no ROEs.
 - Rust API is active on RAGNO Yggdrasil. All five authenticated API routes
-  return HTTP 200. OpenStack reports ONLINE and CAB-A/B/C report ACTIVE only
-  with DB, Nova, Neutron ports, fresh probe evidence, isolation and central
-  connectivity all verified.
+  return HTTP 200. OpenStack reports ONLINE and CAB-A/B/C report ACTIVE with
+  DB, Nova, Neutron ports, the historical guest probe PASS, and an unchanged
+  topology fingerprint.
 - API application credential is Keystone `reader`, restricted, expires
   2027-02-04. Credential and probe evidence are local files under ignored
   `secrets/`, mode 0600; no values are stored in Git.
 
 ## ALEX Gate
 
-- ALEX was not accessed or changed. The live homepage still renders static
-  CAB-A/B/C and its JavaScript expects an obsolete API schema and `/lab/demo`.
-- Browser fetches to the public API prefix time out; Cloudflare reports HTTP
-  524. Direct ALEX-to-RAGNO Yggdrasil reachability is not verified.
-- See the local-only `secrets/ALEX-HANDOFF.md` for the exact ProxyPass,
-  server-side token, dynamic cabinet rendering, and acceptance checks.
+- Lia reports ALEX's read-only token and direct calls to health, cabinets,
+  ROEs, and topology as working. These remote results were not independently
+  re-run during this RAGNO-only documentation pass.
+- This task did not modify ALEX, Apache, or the public frontend. The public
+  ProxyPass/frontend rollout is separate and is not claimed as verified here.
+- See the local-only `secrets/ALEX-HANDOFF.md` for prior deployment notes; do
+  not copy local secret material into Git.
 
-No commit or push was made. Do not mark the overall Photaxon site rollout done
-until ALEX applies the handoff and all five public URLs plus the dynamic page
-are verified.
-# OpenStack Installation and Test Report
+This document now describes the RAGNO control plane. It does not assert the
+status of ALEX's public vhost or browser rendering.
 
-Date: 2026-11-06
-Host: RAGNO, Ubuntu 24.04.4 LTS
-Result: OpenStack not installed; no VM created.
+## Probe Validity
 
-## Inventory
-
-- CPU: Intel Core i3-7100U, 2 physical cores / 4 threads; VT-x and `/dev/kvm`
-  available. Target VM requires 4 vCPU plus host headroom.
-- RAM: 7.7 GiB total, about 5.2 GiB available during inspection; target VM
-  requires 16 GiB plus host headroom.
-- Disk: 512 GB SATA SSD, ext4 root, 407 GiB free; 100 GiB target disk fits.
-- AppArmor is active; the host is not itself inside a detected VM.
-- SSH, Yggdrasil, nftables, and Apache2 are active on RAGNO. ALEX was not
-  inspected remotely.
-- No OpenStack, DevStack, Open vSwitch, OVN, Neutron, Nova, or libvirt
-  components were found. QEMU and `build-essential` were installed for isolated
-  VM/Rust preparation; no guest image or VM has been created.
-- Yggdrasil identity and SSD SMART status could not be verified because the
-  required non-interactive sudo checks were unavailable. UPS protection is
-  unverified because no telemetry tool is installed.
-
-## Verified Checks
-
-- AAA PostgreSQL: read-only `SELECT 1`, `PostgresStore.healthcheck()`, and
-  topology reads passed. Counts: 3 cabinets, 3 lines, 3 splitters, 3 agents.
-- Offline Python suite: 50 tests, 23 passed and 27 DB integration tests skipped
-  by their safety gate. Standalone offline agent checks passed.
-- The modular Rust release API passed 3 unit tests, formatting and Clippy; 7
-  authenticated HTTP checks passed over the local Yggdrasil address, including
-  DB-backed cabinet reads. Its listener was stopped afterward. OpenStack status
-  remains `OFFLINE`.
-- No database rows, SSH, nftables, Apache, Yggdrasil, host networking, or
-  system service configuration were modified.
-
-## Decision
-
-The host does not meet the VM CPU/RAM targets. The user requested an under-sized
-experiment; QEMU packages are present, but cloud-image tooling and a guest VM
-are not. Further privileged setup is blocked because `sudo -n` is unavailable
-in the agent terminal. Do not switch to a direct-host install: it would risk
-the active Apache, SSH, Yggdrasil, and nftables services.
-
-No OpenStack versions/services, ML2/OVN, Horizon, cloud credentials, SDK
-integration, or VM services are installed or verified. Rustup and
-`build-essential` were added; no persistent service, firewall, or network
-configuration was changed. No Git push was made.
+- The guest probes were genuinely executed at initial boot and passed for all
+  12 directional ICMP/TCP expectations. Their original `verified_at` remains
+  `2026-11-06T19:34:15Z`; it is not rewritten or treated as a fresh run.
+- The probe file now stores schema version 1 and SHA-256 fingerprint
+  `8dcb07d97da5cb496c671f4e024a6b4e391beb8bed3d46815d9f9e49105128c4`, bound
+  to the live server/port/network/subnet/security-group/rule topology.
+- The evidence remains valid while the canonical fingerprint is unchanged.
+  A mismatch, invalid/missing evidence, changed required Nova state, or
+  incomplete probe set returns DEGRADED/503 and marks isolation STALE/FAIL.
+- `guest_probe_age_seconds` is informational only; there is no age-based TTL.
+  No timestamp was fabricated, no VM was restarted, and no topology changed.
+- At final verification the original guest timestamp remained
+  `2026-11-06T19:34:15Z`, age 7207 seconds; `/api/lab/openstack` still returned
+  HTTP 200 because the live topology fingerprint matched.
+- A guest command runner/timer is not needed for this fingerprint model. If the
+  topology changes, a new real guest verification is still required; no safe
+  guest exec channel is currently available to perform it automatically.

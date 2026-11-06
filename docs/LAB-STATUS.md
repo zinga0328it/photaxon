@@ -1,37 +1,33 @@
 # FiberSpider Lab Status
 
-This document summarizes the current implementation status of the FiberSpider laboratory in the `pc-ragno` public branch.
+Status verified on RAGNO, 2026-11-06. Physical FTTH provisioning remains a
+simulation/prototype; the OpenStack control-plane lab is real and isolated.
 
-## IMPLEMENTED
+## Implemented and Verified
 
-- FastAPI activation backend for technician activation requests.
-- OTP generation and challenge flow with Telegram-backed verification support.
-- PostgreSQL persistence for activation requests and OTP challenge state.
-- Cabinet agent logic for field events and technician arrival.
-- OpenStack laboratory integration as a simulated networking/runtime environment.
-- Resource state persistence and deterministic state transitions.
+- Rust Axum API is the primary RAGNO runtime; Python/FastAPI activation code is
+	legacy/demo tooling.
+- Technician authentication/OTP and AAA PostgreSQL persistence remain present.
+- DevStack `stable/2026.2` runs Keystone, Glance, Nova, Placement,
+	Neutron ML2/OVN on the constrained RAGNO host.
+- Nova runs `CENTRAL-01`, `CAB-A`, `CAB-B`, and `CAB-C` as CirrOS lab servers.
+- Three separate cabinet management/FTTH network pairs use private Geneve
+	tenant networks; central has management-only ports.
+- Rust reads OpenStack and AAA live. Cabinet ACTIVE status requires DB/Nova,
+	dedicated networks/ports, a passing guest probe record and a matching live
+	topology fingerprint.
+- Scoped client auth gives `alex-web` only the `dashboard` GET scope; legacy
+	API/admin/internal credentials remain distinct.
 
-## WORKING
+See `RAGNO-FINAL-HANDOFF.md` for exact endpoints, topology, test results and
+the fingerprint-bound guest verification model.
 
-- Technician authorization against persisted PostgreSQL state.
-- Activation request lifecycle from OTP request to verification.
-- Simulated path analysis and activation completion.
-- Cabinet-level agent proposals via LLM runtime simulation.
-- Persistent storage of activation requests and OTP challenges, with resource lease support implemented at the engine/database layer.
+## Simulated or Planned
 
-## SIMULATED
-
-- FTTH provisioning and physical path execution.
-- Cabinet field operations such as ONT discovery and splitter path assignment.
-- Laboratory path topology decisions and provisioning actions.
-- Physical GPON/OLT behavior is modeled in software rather than executed on real hardware.
-
-## PLANNED
-
-- physical ONT integration
-- mini-OLT / GPON integration
-- smart cabinet sensors for real field telemetry
-- distributed field cabinet prototype deployment
-- pilot deployment with research partners
-
-> Note: no physical GPON provisioning is currently implemented in this branch. The laboratory remains a proof-of-concept simulation environment.
+- Physical GPON/OLT provisioning and real ONT operations are not performed.
+- Cabinet hardware, optical sensors, resilient power and field telemetry are
+	research/prototype work.
+- ALEX public Apache/frontend deployment is owned separately by ALEX; this
+	RAGNO status does not claim that public-site changes were applied.
+- ZINGA remains a future independent broker/key-manager server; no broker or
+	event bus is implemented here.

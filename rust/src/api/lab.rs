@@ -24,11 +24,7 @@ pub async fn openstack(
         Ok(snapshot) => snapshot,
         Err(error) => return errors::unavailable(error),
     };
-    let nova = snapshot.hypervisors.iter().any(|item| item.state == "up")
-        || snapshot
-            .servers
-            .iter()
-            .any(|server| server.status == "ACTIVE");
+    let nova = crate::openstack::required_nova_servers_active(&snapshot.servers);
     let glance = snapshot
         .images
         .iter()
@@ -55,9 +51,8 @@ pub async fn openstack(
         })
     });
     let ovn = geneve_visible
-        || (snapshot.ovn_backend.as_deref() == Some("geneve")
-            && snapshot.probe_verified_at.is_some());
-    let online = nova && glance && neutron && ovn;
+        || (snapshot.ovn_backend.as_deref() == Some("geneve") && snapshot.topology_unchanged);
+    let online = dashboard_online(nova, glance, neutron, ovn, snapshot.probe_valid);
     let status = if online { "ONLINE" } else { "DEGRADED" };
     let http_status = if online {
         StatusCode::OK
@@ -65,6 +60,15 @@ pub async fn openstack(
         StatusCode::SERVICE_UNAVAILABLE
     };
     let hypervisor_count = (!snapshot.hypervisors.is_empty()).then_some(snapshot.hypervisors.len());
+    let isolation = if snapshot.probe_valid {
+        "PASS"
+    } else if snapshot.probe_topology_fingerprint.is_some() && !snapshot.topology_unchanged {
+        "STALE"
+    } else if snapshot.probe_topology_fingerprint.is_some() && !snapshot.guest_probe_pass {
+        "FAIL"
+    } else {
+        "UNVERIFIED"
+    };
     (
         http_status,
         Json(json!({
@@ -77,7 +81,13 @@ pub async fn openstack(
             "ovn": if ovn { "PASS" } else { "FAIL" },
             "server_count": snapshot.servers.len(),
             "hypervisor_count": hypervisor_count,
-            "probe_verified_at": snapshot.probe_verified_at,
+            "isolation": isolation,
+            "topology_fingerprint": snapshot.current_topology_fingerprint,
+            "probe_topology_fingerprint": snapshot.probe_topology_fingerprint,
+            "topology_unchanged": snapshot.topology_unchanged,
+            "verification_mode": if snapshot.probe_valid { Some("guest_probe_plus_unchanged_topology") } else { None },
+            "last_guest_probe_at": snapshot.probe_verified_at,
+            "guest_probe_age_seconds": snapshot.guest_probe_age_seconds,
         })),
     )
 }
@@ -191,13 +201,21 @@ fn cabinet_status(
         .unwrap_or("MISSING");
     let mgmt_present = network_attached(snapshot, server, &mgmt_name);
     let ftth_present = network_attached(snapshot, server, &ftth_name);
-    let isolation = if snapshot.probe_verified_at.is_some() {
+    let isolation = if snapshot.probe_valid {
         isolation_status(cabinet_id, snapshot)
+    } else if snapshot.probe_topology_fingerprint.is_some() && !snapshot.topology_unchanged {
+        "STALE"
+    } else if snapshot.probe_topology_fingerprint.is_some() && !snapshot.guest_probe_pass {
+        "FAIL"
     } else {
         "UNVERIFIED"
     };
-    let central_connectivity = if snapshot.probe_verified_at.is_some() {
+    let central_connectivity = if snapshot.probe_valid {
         central_connectivity_status(cabinet_id, snapshot)
+    } else if snapshot.probe_topology_fingerprint.is_some() && !snapshot.topology_unchanged {
+        "STALE"
+    } else if snapshot.probe_topology_fingerprint.is_some() && !snapshot.guest_probe_pass {
+        "FAIL"
     } else {
         "UNVERIFIED"
     };
@@ -205,6 +223,7 @@ fn cabinet_status(
         && nova_state == "ACTIVE"
         && mgmt_present
         && ftth_present
+        && snapshot.probe_valid
         && isolation == "PASS"
         && central_connectivity == "PASS";
     json!({
@@ -222,6 +241,10 @@ fn cabinet_status(
         "isolation": isolation,
         "central_connectivity": central_connectivity,
         "probe_verified_at": snapshot.probe_verified_at,
+        "topology_fingerprint": snapshot.current_topology_fingerprint,
+        "probe_topology_fingerprint": snapshot.probe_topology_fingerprint,
+        "topology_unchanged": snapshot.topology_unchanged,
+        "verification_mode": if snapshot.probe_valid { Some("guest_probe_plus_unchanged_topology") } else { None },
         "status": if active { "ACTIVE" } else { "INACTIVE" },
     })
 }
@@ -298,9 +321,24 @@ fn probe_matches(log: &str, label: &str, expected: &str) -> Option<bool> {
     Some(has(&format!("ICMP={expected}")) && has(&format!("TCP={expected}")) && has("RESULT=PASS"))
 }
 
+fn dashboard_online(nova: bool, glance: bool, neutron: bool, ovn: bool, probe_valid: bool) -> bool {
+    nova && glance && neutron && ovn && probe_valid
+}
+
 #[cfg(test)]
 mod tests {
-    use super::probe_matches;
+    use super::{dashboard_online, probe_matches};
+
+    #[test]
+    fn unchanged_historical_probe_and_healthy_services_allow_online() {
+        assert!(dashboard_online(true, true, true, true, true));
+    }
+
+    #[test]
+    fn inactive_nova_or_invalid_probe_keeps_dashboard_degraded() {
+        assert!(!dashboard_online(false, true, true, true, true));
+        assert!(!dashboard_online(true, true, true, true, false));
+    }
 
     #[test]
     fn probe_requires_both_protocols_and_success_result() {
