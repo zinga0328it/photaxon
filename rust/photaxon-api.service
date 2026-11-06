@@ -1,0 +1,17 @@
+[Unit]
+Description=Photaxon FiberSpider Rust API
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ragno/apps/photaxon
+EnvironmentFile=/home/ragno/apps/photaxon/secrets/runtime.env
+Environment=FIBERSPIDER_ENV_FILE=/home/ragno/apps/photaxon/secrets/runtime.env
+ExecStart=/home/ragno/apps/photaxon/rust/target/release/fiberspider-api
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+UMask=0077
+
+[Install]
+WantedBy=default.target

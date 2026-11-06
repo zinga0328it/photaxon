@@ -1,0 +1,40 @@
+[[local|localrc]]
+
+# DevStack xtrace is disabled before loading the private password file.
+set +x
+set -a
+source /opt/stack/secrets/openstack.env
+set +a
+
+TARGET_BRANCH=stable/2026.2
+HOST_IP=$HOST_IP
+TUNNEL_ENDPOINT_IP=$HOST_IP
+SERVICE_HOST=127.0.0.1
+SERVICE_LOCAL_HOST=127.0.0.1
+
+ADMIN_PASSWORD=$ADMIN_PASSWORD
+DATABASE_PASSWORD=$DATABASE_PASSWORD
+RABBIT_PASSWORD=$RABBIT_PASSWORD
+SERVICE_PASSWORD=$SERVICE_PASSWORD
+
+Q_AGENT=ovn
+Q_PLUGIN=ml2
+Q_ML2_PLUGIN_MECHANISM_DRIVERS=ovn
+Q_ML2_PLUGIN_TYPE_DRIVERS=geneve,local
+Q_ML2_TENANT_NETWORK_TYPE=geneve
+PUBLIC_INTERFACE=
+ENABLE_CHASSIS_AS_GW=False
+OVN_L3_CREATE_PUBLIC_NETWORK=False
+Q_USE_SECGROUP=True
+FIXED_RANGE=10.88.0.0/24
+FIXED_NETWORK_SIZE=256
+
+disable_service horizon
+disable_service cinder c-api c-sch c-vol c-bak
+disable_service swift s-proxy s-object s-container s-account
+disable_service heat h-api h-api-cfn h-api-cw h-eng
+disable_service octavia o-api o-cw o-hk o-hm o-ws
+disable_service magnum m-api m-cond
+disable_service trove t-api t-taskmgr t-conductor
+disable_service ceilometer-acompute ceilometer-acentral ceilometer-anotification ceilometer-collector
+disable_service tempest dstat

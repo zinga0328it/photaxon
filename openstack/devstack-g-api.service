@@ -1,0 +1,18 @@
+[Unit]
+Description=Devstack devstack@g-api.service
+After=network.target
+
+[Service]
+RestartForceExitStatus=100
+NotifyAccess=all
+Restart=always
+KillMode=process
+Type=notify
+ExecReload=/usr/bin/kill -HUP $MAINPID
+ExecStart=/bin/uwsgi --procname-prefix glance-api --ini /etc/glance/glance-uwsgi.ini --venv /opt/stack/data/venv
+User=stack
+SyslogIdentifier=devstack@g-api.service
+Environment=PATH=/opt/stack/data/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+[Install]
+WantedBy=multi-user.target
