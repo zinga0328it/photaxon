@@ -60,10 +60,9 @@ services and must not be reported as a successful deployment unless verified.
 - AppArmor is active.
 - SSH, Yggdrasil, nftables, and Apache2 are active on the inspected RAGNO
   host. The separate ALEX host was not inspected.
-- At the pre-install inventory, OpenStack, DevStack, Open vSwitch, OVN,
-  Neutron, and Nova were absent; this snapshot is historical only.
-  or active. QEMU system packages are installed, but libvirt, `cloud-localds`,
-  and a guest VM are absent.
+- At the pre-install inventory, no OpenStack/DevStack/OVS/OVN deployment was
+  present; this snapshot is historical only. QEMU system packages were already
+  installed, but libvirt, `cloud-localds`, and guest VMs were absent.
 - RAGNO-to-AAA PostgreSQL health and read-only topology checks succeeded;
   counts were 3 cabinets, 3 lines, 3 splitters, and 3 agents. No rows changed.
 - Yggdrasil identity retrieval and SMART health were not verified because
