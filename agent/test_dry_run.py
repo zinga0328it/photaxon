@@ -5,7 +5,10 @@ from .cabinet_agent import CabinetAgent, Event
 
 def run_dry_run() -> bool:
     agent = CabinetAgent(agent_id="AGENT-CAB-A", cabinet_id="CAB-A")
-    event = Event(type="TECHNICIAN_ARRIVED", payload={"location": "door", "time": "now"})
+    event = Event(
+        type="TECHNICIAN_ARRIVED",
+        payload={"technician_id": "3512424187", "location": "door", "time": "now"},
+    )
     result = agent.handle_event(event, dry_run=True)
     return result["action"] == "dry_run" and result["proposal"] is not None
 

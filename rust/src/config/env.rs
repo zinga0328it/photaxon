@@ -3,6 +3,20 @@ use crate::credentials::{env_provider::EnvCredentialProvider, provider::Credenti
 use crate::security::{secrets, tokens::AuthTokens};
 use std::{error::Error, net::SocketAddr, sync::Arc};
 
+pub fn load_database_from_file(path: &std::path::Path) -> Result<DatabaseConfig, Box<dyn Error>> {
+    let database = DatabaseConfig {
+        host: secrets::required_from_file(path, "FIBERSPIDER_DB_HOST")?.parse()?,
+        port: secrets::required_from_file(path, "FIBERSPIDER_DB_PORT")?.parse()?,
+        name: secrets::required_from_file(path, "FIBERSPIDER_DB_NAME")?,
+        user: secrets::required_from_file(path, "FIBERSPIDER_DB_USER")?,
+        password: secrets::required_from_file(path, "FIBERSPIDER_DB_PASSWORD")?,
+    };
+    if !validation::is_yggdrasil(database.host) || database.port == 0 {
+        return Err("AAA must use a configured Yggdrasil IPv6 address and valid port".into());
+    }
+    Ok(database)
+}
+
 pub fn load() -> Result<AppConfig, Box<dyn Error>> {
     secrets::load_env_file()?;
     let bind_addr: SocketAddr = secrets::required("FIBERSPIDER_BIND_ADDR")?.parse()?;

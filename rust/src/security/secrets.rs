@@ -1,4 +1,7 @@
-use std::{env, io, path::PathBuf};
+use std::{
+    env, io,
+    path::{Path, PathBuf},
+};
 
 pub fn load_env_file() -> Result<(), io::Error> {
     let path = env::var_os("FIBERSPIDER_ENV_FILE")
@@ -38,4 +41,28 @@ pub fn required(name: &'static str) -> Result<String, io::Error> {
 
 pub fn optional(name: &'static str) -> Option<String> {
     env::var(name).ok().filter(|value| !value.trim().is_empty())
+}
+
+pub fn required_from_file(path: &Path, name: &str) -> Result<String, io::Error> {
+    let entries = dotenvy::from_path_iter(path).map_err(|_| {
+        io::Error::new(
+            io::ErrorKind::NotFound,
+            "protected runtime file is unavailable",
+        )
+    })?;
+    for entry in entries {
+        let (key, value) = entry.map_err(|_| {
+            io::Error::new(
+                io::ErrorKind::InvalidData,
+                "protected runtime file is invalid",
+            )
+        })?;
+        if key == name && !value.trim().is_empty() {
+            return Ok(value);
+        }
+    }
+    Err(io::Error::new(
+        io::ErrorKind::InvalidInput,
+        "required protected runtime setting is missing",
+    ))
 }

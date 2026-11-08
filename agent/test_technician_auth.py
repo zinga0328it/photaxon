@@ -33,7 +33,7 @@ def test_valid_technician() -> bool:
     agent = CabinetAgent(agent_id="AGENT-CAB-A", cabinet_id="CAB-A", store=MockPostgresStore({"3512424187"}))
     event = Event(type="TECHNICIAN_ARRIVED", payload={"technician_id": "3512424187"})
     result = agent.handle_event(event, dry_run=False)
-    return result["proposal"]["decision"] == "AUTHENTICATED"
+    return result["action"] == "otp_required" and result["proposal"]["decision"] == "OTP_REQUIRED"
 
 
 if __name__ == "__main__":

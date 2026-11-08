@@ -1,4 +1,5 @@
 mod env;
+pub mod telegram;
 pub mod validation;
 
 use crate::credentials::provider::CredentialProvider;
@@ -8,7 +9,7 @@ use std::{
     sync::Arc,
 };
 
-pub use env::load;
+pub use env::{load, load_database_from_file};
 
 pub struct AppConfig {
     pub server: ServerConfig,

@@ -1,3 +1,4 @@
+pub mod admin_inventory;
 pub mod anomalies;
 pub mod audit;
 pub mod bootstrap;

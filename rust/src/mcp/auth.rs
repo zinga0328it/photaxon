@@ -1,5 +1,8 @@
 use sqlx::PgPool;
 use std::{env, io};
+use uuid::Uuid;
+
+pub const CONTROL_PLANE_ADMIN_PRINCIPAL: &str = "CONTROL_PLANE_ADMIN";
 
 #[derive(Clone)]
 pub struct InvocationContext {
@@ -41,6 +44,65 @@ impl InvocationContext {
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct ControlPlaneAdminContext {
+    pub invocation_id: String,
+    pub principal_id: &'static str,
+    writes_authorized: bool,
+}
+
+impl ControlPlaneAdminContext {
+    pub fn for_private_tunnel() -> Self {
+        Self {
+            invocation_id: Uuid::new_v4().to_string(),
+            principal_id: CONTROL_PLANE_ADMIN_PRINCIPAL,
+            writes_authorized: false,
+        }
+    }
+
+    pub fn from_authorized_tunnel_parent() -> Result<Self, io::Error> {
+        let status = std::fs::read_to_string("/proc/self/status")?;
+        let parent = status.lines().find_map(|line| {
+            line.strip_prefix("PPid:")?.trim().parse::<u32>().ok()
+        }).ok_or_else(|| io::Error::other("MCP parent identity unavailable"))?;
+        let executable = std::fs::read_link(format!("/proc/{parent}/exe"))?;
+        let trusted = std::path::Path::new("/home/ragno/.local/bin/tunnel-client").canonicalize()?;
+        let command = std::fs::read(format!("/proc/{parent}/cmdline"))?;
+        let arguments: Vec<_> = command.split(|byte| *byte == 0).filter(|argument| !argument.is_empty()).collect();
+        if executable != trusted
+            || !arguments.iter().any(|argument| *argument == b"run")
+            || !arguments.windows(2).any(|pair| pair[0] == b"--profile" && pair[1] == b"fiberspider-ragno")
+        {
+            return Err(io::Error::new(io::ErrorKind::PermissionDenied,
+                "administrative MCP requires the authorized private tunnel parent"));
+        }
+        Ok(Self {
+            invocation_id: Uuid::new_v4().to_string(),
+            principal_id: CONTROL_PLANE_ADMIN_PRINCIPAL,
+            writes_authorized: true,
+        })
+    }
+
+    pub fn require_write_authorization(&self) -> Result<(), &'static str> {
+        if self.writes_authorized {
+            Ok(())
+        } else {
+            Err(
+                "administrative writes require the authorized private tunnel launch",
+            )
+        }
+    }
+
+    #[cfg(test)]
+    pub(crate) fn for_authorized_rollback_test() -> Self {
+        Self {
+            invocation_id: Uuid::new_v4().to_string(),
+            principal_id: CONTROL_PLANE_ADMIN_PRINCIPAL,
+            writes_authorized: true,
+        }
+    }
+}
+
 fn required(name: &'static str) -> Result<String, io::Error> {
     env::var(name)
         .ok()
@@ -55,5 +117,11 @@ mod tests {
     #[test]
     fn missing_context_variable_is_rejected() {
         assert!(required("FIBERSPIDER_MCP_INVOCATION_ID").is_err());
+    }
+
+    #[test]
+    fn private_tunnel_is_not_an_authenticated_administrator() {
+        let actor = super::ControlPlaneAdminContext::for_private_tunnel();
+        assert!(actor.require_write_authorization().is_err());
     }
 }

@@ -32,7 +32,7 @@ class CabinetAgent:
         self.agent_id = agent_id
         self.cabinet_id = cabinet_id
         self.llm_runtime = llm_runtime or LLMRuntime()
-        self.store = store or PostgresStore()
+        self.store = store
         self.otp_provider = otp_provider or MockOTPProvider()
         self.otp_service = otp_service or OTPService()
         self.telegram_provider = telegram_provider or MockTelegramProvider()
@@ -50,6 +50,34 @@ class CabinetAgent:
             "action": "noop",
             "proposal": None,
         }
+
+    def evaluate_roe_selection(self, context: dict[str, Any]) -> dict[str, Any]:
+        """Ask this cabinet's Codex runtime for a structured ROE proposal."""
+        if context.get("candidate_cabinet_id") != self.cabinet_id:
+            return {"success": False, "error": "selected cabinet mismatch"}
+        return self.llm_runtime.roe_selection_decision(
+            self.agent_id,
+            self.cabinet_id,
+            context,
+        )
+
+    def extract_ont_label(self, image_path: str, context: dict[str, Any]) -> dict[str, Any]:
+        if context.get("cabinet_id") != self.cabinet_id:
+            return {"success": False, "error": "selected cabinet mismatch"}
+        return self.llm_runtime.extract_ont_label(
+            self.agent_id,
+            self.cabinet_id,
+            image_path,
+        )
+
+    def analyze_ont_port_conflict(self, context: dict[str, Any]) -> dict[str, Any]:
+        if context.get("cabinet_id") != self.cabinet_id:
+            return {"success": False, "error": "selected cabinet mismatch"}
+        return self.llm_runtime.analyze_ont_port_conflict(
+            self.agent_id,
+            self.cabinet_id,
+            context,
+        )
 
     def _handle_technician_arrived(self, event: Event, dry_run: bool = True) -> dict[str, Any]:
         technician_id = event.payload.get("technician_id")
@@ -79,8 +107,10 @@ class CabinetAgent:
                 },
             }
 
-        self.store.connect()
-        authorized = self.store.is_technician_authorized(str(technician_id))
+        store = self.store or PostgresStore()
+        self.store = store
+        store.connect()
+        authorized = store.is_technician_authorized(str(technician_id))
         if not authorized:
             return {
                 "agent_id": self.agent_id,

@@ -1,7 +1,12 @@
 pub mod anomaly;
 pub mod cabinet;
+pub mod delivery;
+pub mod field_ops;
 pub mod ont;
+pub mod ont_acceptance;
+pub mod physical_asset;
 pub mod pte;
+pub mod resource_assignment;
 pub mod roe;
 pub mod splitter;
 pub mod topology;

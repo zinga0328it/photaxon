@@ -15,18 +15,26 @@ FiberSpider is a distributed FTTH laboratory architecture that combines:
 
 `pc-ragno` contains the RAGNO laboratory backend and the FiberSpider activation API.
 
-- FastAPI activation service for technician workflows
-- Telegram OTP-based technician verification
+- Rust API and private ChatGPT MCP control plane (112 live tools)
+- Telegram private ACTIVE technician identity; OTP reserved for the future WR web panel
 - PostgreSQL persistence for activation requests, OTP challenges, and resource state
 - Cabinet agent simulation for CAB-A, CAB-B, CAB-C
 - Laboratory LLM runtime and topology proposal support, with deterministic backend validation
 - Proof-of-concept FTTH provisioning simulation, not physical GPON deployment
+
+Current verified implementation: private OpenAI Secure MCP Tunnel, named Rust
+services and AAA transactions/audit; physical asset models and legacy provenance,
+WR/photo catalogs and manual ONE acceptance with mandatory test code. The digital
+twin and external delivery automation remain partial. No local database is used.
 
 ## Documentation
 
 See the following documents for details:
 
 - `docs/ARCHITECTURE.md`
+- `docs/ARCHITETTURA.md` (current architecture and complete tool groups)
+- `docs/OBIETTIVI.md` (verified live state and pending work)
+- `docs/CHATGPT-MCP.md` (private tunnel runbook)
 - `docs/BRANCHES.md`
 - `docs/LAB-STATUS.md`
 - `docs/ACTIVATION-FLOW.md`
