@@ -1,110 +1,220 @@
 # Photaxon — FiberSpider
-Distributed FTTH Research Laboratory
 
-FiberSpider is an experimental distributed FTTH architecture developed under the Photaxon research project.
+### Gestione FTTH assistita da intelligenza artificiale
 
-The project investigates intelligent distributed cabinet nodes, LLM-assisted network reasoning, deterministic network control, persistent topology state, OpenStack/Neutron laboratory simulation, secure technician workflows and resilient FTTH automation.
+**FiberSpider** è una piattaforma sperimentale per la gestione di attività FTTH, inventario di rete e lavorazioni sul campo.
 
-## The problem
+Il progetto unisce workflow operativi, digital twin della rete, controllo deterministico in Rust, database PostgreSQL distribuito e assistenza tramite ChatGPT/MCP.
 
-Traditional FTTH workflows often depend on pre-assigned physical topology and centralized operational information.
+L'obiettivo è seguire una lavorazione FTTH **dalla rete fino al cliente finale**, mantenendo stato, storico, misure e prove dell'intervento.
 
-FiberSpider researches a different model based on:
+## Cosa permette di gestire
 
-- stable logical identity
-- dynamic physical path
-- distributed intelligent nodes
-- authoritative persistent state
+FiberSpider modella la catena FTTH:
 
-## Architecture
+```text
+ARLO / CRO
+   ↓
+Splitter
+   ↓
+Cavi, tubetti e fibre
+   ↓
+Muffole / giunti
+   ↓
+ROE / PTE
+   ↓
+Porte e montanti
+   ↓
+Segmento di terminazione
+   ↓
+Borchia ottica / OTO
+   ↓
+ONT
+   ↓
+Modem / Router
+   ↓
+Cliente / WR / Collaudo
+```
 
-Browser
-   |
-   v
-ALEX
-Public frontend / Apache reverse proxy
-   |
-   v
-RAGNO
-FiberSpider backend / agents / OpenStack laboratory
-   |
-   v
-AAA
-PostgreSQL persistent network state
+Per gli elementi fisici possono essere registrati codice operativo, indirizzo, posizione GPS, stato, relazioni con gli altri asset e storico delle modifiche.
 
-CAB-A <--> CAB-B <--> CAB-C
+## Un intervento, in pratica
 
-Distributed cabinet laboratory nodes.
+Un flusso operativo può comprendere:
 
-## Public branches
+1. apertura o acquisizione della **WR**;
+2. identificazione di armadio, splitter e ROE/PTE;
+3. registrazione di indirizzo e **GPS**;
+4. verifica della porta disponibile;
+5. associazione di cavo, tubetto e fibra;
+6. posa del segmento fino alla borchia ottica;
+7. registrazione e installazione **ONT**;
+8. registrazione o sostituzione del **modem**;
+9. inserimento delle misure ottiche;
+10. collaudo tramite **ONE**, con codice collaudo obbligatorio quando previsto;
+11. associazione delle fotografie dell'intervento;
+12. chiusura della lavorazione con storico e audit.
 
-- [pc-ragno](https://github.com/zinga0328it/photaxon/tree/pc-ragno): Backend, FastAPI activation laboratory, cabinet agents, LLM runtime, OpenStack integration and simulation engine.
-- [pc-aaa](https://github.com/zinga0328it/photaxon/tree/pc-aaa): PostgreSQL schema and persistent FiberSpider state model.
-- [pc-alex](https://github.com/zinga0328it/photaxon/tree/pc-alex): Public Photaxon frontend and sanitized Apache reverse-proxy example.
+Le operazioni critiche vengono validate prima della scrittura: ad esempio una porta occupata non viene riutilizzata automaticamente.
 
-The branches intentionally remain separate because each branch represents a different physical laboratory node.
+## ChatGPT come interfaccia operativa
 
-## Current status
+FiberSpider dispone di un control plane MCP privato collegato a ChatGPT.
 
-### WORKING SOFTWARE PROOF OF CONCEPT
+Nella versione corrente del laboratorio, il branch `pc-ragno` espone **112 strumenti MCP** per consultare e amministrare le funzioni disponibili.
 
-- FastAPI activation workflow
-- technician authorization against PostgreSQL
-- Telegram OTP delivery and verification
-- PostgreSQL activation persistence
-- cabinet agent laboratory components
-- OpenStack/Neutron laboratory environment
-- public Photaxon frontend
-- distributed three-node architecture
+Esempi di richieste:
 
-IMPORTANT:
+- “Mostrami la topologia dell'armadio.”
+- “Verifica se questa porta è libera.”
+- “Registra una ROE con questo indirizzo e GPS.”
+- “Associa l'ONT alla WR.”
+- “Mostrami il collaudo della pratica.”
+- “Elenca le fotografie collegate alla lavorazione.”
 
-- WR is currently stored as a reference.
-- WR validation is NOT_IMPLEMENTED.
-- LLM runtime exists but is not directly invoked by the current web activation endpoint.
-- Resource lease/state-transition support exists in the engine/database layer but is not yet wired into the current web activation endpoint.
+ChatGPT non riceve accesso SQL libero: le operazioni passano attraverso servizi Rust, validazioni, transazioni e audit.
 
-### SIMULATED
+## Tecnico sul campo
 
-- ONT detection
-- physical FTTH path confirmation
-- provisioning execution
-- GPON/OLT behavior
-- physical fiber switching
-- JOB_CLOSED provisioning result
+Il tecnico può operare attraverso workflow dedicati, incluso Telegram nel laboratorio.
 
-### PLANNED HARDWARE RESEARCH
+Il sistema distingue il ruolo del tecnico dal control plane amministrativo.
 
-- physical ONT integration
-- mini-OLT / GPON laboratory
-- smart cabinet sensors
-- distributed active cabinet prototype
-- real field pilot
+Tra i dati gestibili rientrano:
 
-## Research, partnerships and funding
+- WR e appuntamenti;
+- ROE/PTE e apparati;
+- seriali ONT e modem;
+- GPS;
+- misure ottiche;
+- foto dell'intervento;
+- stato e motivazioni di KO;
+- collaudo e chiusura.
 
-Photaxon is seeking collaboration for the next research phase.
+## Foto e prove dell'intervento
 
-Interests:
+Le immagini operative non vengono pubblicate nel repository.
 
-- research funding
-- telecommunications operators
-- universities and research institutes
-- networking / optical hardware partners
-- smart cabinet prototyping
-- FTTH pilot locations
-- distributed network research
-- commercial technology partnerships
+I file restano privati sul nodo RAGNO, mentre nel database vengono conservati i riferimenti necessari alla lavorazione:
 
-The software proof of concept serves as a basis for designing and testing future FiberSpider hardware.
+- WR;
+- asset associato;
+- tipo di prova;
+- versione;
+- hash;
+- data;
+- autore e storico.
 
-## Licensing
+## Architettura del laboratorio
+
+```text
+                    ChatGPT / Lia
+                         │
+                 Secure MCP Tunnel
+                         │
+                       RAGNO
+               Rust API / MCP / Bot
+                         │
+                     Yggdrasil
+                         │
+                        AAA
+                  PostgreSQL state
+
+Browser ──> ALEX ──> servizi FiberSpider
+```
+
+### Nodi principali
+
+- **AAA** — stato persistente della rete, WR, inventario, audit e collaudi.
+- **RAGNO** — servizi Rust, MCP, workflow tecnico e gestione privata delle foto.
+- **ALEX** — frontend e punto web del laboratorio.
+- **Cabinet agent** — componenti sperimentali per il ragionamento distribuito sugli armadi.
+
+## Digital twin FTTH
+
+FiberSpider dispone di modelli per:
+
+- ARLO/CRO;
+- splitter primario e secondario;
+- muffole;
+- cavi;
+- tubetti;
+- fibre;
+- ROE/PTE;
+- morsettiere e porte;
+- montanti e derivazioni;
+- segmenti di terminazione;
+- borchie ottiche;
+- ONT;
+- modem.
+
+Gli asset legacy del laboratorio possono essere importati nel registro fisico mantenendo la provenienza dei dati. Se indirizzo o GPS non sono conosciuti, il sistema li mantiene come mancanti invece di inventarli.
+
+## Sicurezza e tracciabilità
+
+- nessun SQL libero esposto all'assistente;
+- validazione Rust prima delle operazioni;
+- transazioni e idempotenza;
+- audit delle modifiche;
+- separazione tra tecnico e amministratore;
+- segreti esclusi dal repository;
+- foto operative escluse dal repository;
+- accesso amministrativo MCP tramite tunnel privato.
+
+## Stato attuale
+
+### Verificato nel laboratorio
+
+- backend Rust;
+- PostgreSQL AAA;
+- rete privata Yggdrasil;
+- MCP privato collegato a ChatGPT;
+- 112 strumenti MCP live sul branch `pc-ragno`;
+- gestione WR;
+- modelli fisici FTTH;
+- protezione delle porte occupate;
+- registrazione ONT e modem;
+- workflow ONE manuale con codice collaudo;
+- catalogo foto e versioni;
+- audit e idempotenza;
+- import degli asset legacy;
+- test transazionali con rollback.
+
+### Ancora in sviluppo
+
+- tracciamento ottico e giunzioni end-to-end completi;
+- lifecycle completo di tutti gli asset;
+- integrazione automatica con API ONE, se documentata e disponibile;
+- adapter completo verso gestionali delivery esterni;
+- ulteriori funzioni assurance e materiali;
+- sperimentazione hardware GPON/OLT.
+
+**FiberSpider è un laboratorio e proof of concept operativo, non un sistema dichiarato pronto per deployment GPON di produzione.**
+
+## Documentazione tecnica
+
+- [Backend RAGNO e stato operativo](https://github.com/zinga0328it/photaxon/tree/pc-ragno)
+- [Architettura aggiornata](https://github.com/zinga0328it/photaxon/blob/pc-ragno/docs/ARCHITETTURA.md)
+- [Stato e obiettivi](https://github.com/zinga0328it/photaxon/blob/pc-ragno/docs/OBIETTIVI.md)
+- [MCP ChatGPT](https://github.com/zinga0328it/photaxon/blob/pc-ragno/docs/CHATGPT-MCP.md)
+- [Modello di sicurezza](https://github.com/zinga0328it/photaxon/blob/pc-ragno/docs/SECURITY-MODEL.md)
+
+## Ricerca e collaborazioni
+
+Photaxon / FiberSpider è un progetto di ricerca e sviluppo orientato a:
+
+- automazione FTTH;
+- gestione intelligente della rete;
+- digital twin;
+- agenti LLM applicati alle infrastrutture;
+- reti distribuite;
+- workflow tecnici assistiti;
+- sperimentazione GPON e smart cabinet.
+
+## Licenza
 
 Copyright © Photaxon / FiberSpider.
+
 All rights reserved.
 
-This repository is publicly visible for research, demonstration and partnership evaluation.
-
-No open-source license is granted.
-
-Commercial use, deployment, redistribution, integration, derivative commercial implementation or production adoption requires prior written authorization and a separate commercial licensing agreement with the project owner.
+Il repository è pubblicamente visibile a fini di ricerca, dimostrazione e valutazione. Nessuna licenza open source è concessa automaticamente. Uso commerciale, distribuzione o integrazione richiedono autorizzazione scritta del titolare del progetto.
